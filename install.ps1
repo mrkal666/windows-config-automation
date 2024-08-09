@@ -37,11 +37,16 @@ $wingetPackagesDevDesktop = @(
 
 $dots_repo = "https://github.com/mrkal666/dots.git"
 
+$provider = Get-PackageProvider NuGet -ErrorAction Ignore
+if (-not $provider) {
+	Write-Host "Installing provider NuGet"
+        Find-PackageProvider -Name NuGet -ForceBootstrap -IncludeDependencies
+}
+
 # Check for winget
 if (-not(Get-Module -ListAvailable -Name Microsoft.Winget.Client)) {
     try {
-        Find-PackageProvider -Name NuGet -ForceBootstrap -IncludeDependencies
-        Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery -AllowClobber | Out-Null
+        Install-Module -Name Microsoft.WinGet.Client -Force -AllowClobber
       } catch {
         throw "Microsoft.Winget.Client was not installed successfully"
       } finally {
@@ -66,6 +71,9 @@ try {
 }
 
 Write-Output $ComputerType
+
+# We have to execute winget once to accept the EULA
+winget
 
 # Install Github CLI
 Write-Output "Installing package: GitHub.cli"
@@ -104,6 +112,25 @@ foreach ($package in $wingetPackages) {
         Write-host "Skipping: " $package " (already installed)"
     }
 }
+
+if($ComputerType -eq 'dev-desktop' -or $ComputerType -eq 'desktop') {
+    foreach ($wingetPackagesDevDesktop in $wingetPackages) {
+        Write-Output "Installing package: $package"
+        
+        $listApp = winget list --exact --id $package
+        if (![String]::Join("", $listApp).Contains($package)) {
+            Write-host "Installing: " $package
+            $status = Install-WinGetPackage -Filter "--accept-source-agreements --accept-package-agreements" -Id $package
+            if ($status.Status -ne "Ok") {
+                Write-Host "Failed to install package: " $package
+            }
+        }
+        else {
+            Write-host "Skipping: " $package " (already installed)"
+        }
+    }
+}
+
 
 # Refresh PATH
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
@@ -149,3 +176,6 @@ if($ComputerType -eq "dev-desktop") {
     Enable-WindowsOptionalFeature -FeatureName HypervisorPlatform
 }
 
+# Reboot the computer
+Write-Output "Rebooting the computer"
+Restart-Computer -Force
