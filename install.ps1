@@ -86,24 +86,24 @@ else {
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 # Auth to GitHub
-# gh auth login
-# 
-# # Install winget packages
-# foreach ($package in $wingetPackages) {
-#     Write-Output "Installing package: $package"
-#     
-#     $listApp = winget list --exact --id $package
-#     if (![String]::Join("", $listApp).Contains($package)) {
-#         Write-host "Installing: " $package
-#         $status = Install-WinGetPackage -Id $package
-#         if ($status.Status -ne "Ok") {
-#             Write-Host "Failed to install package: " $package
-#         }
-#     }
-#     else {
-#         Write-host "Skipping: " $package " (already installed)"
-#     }
-# }
+gh auth login
+
+# Install winget packages
+foreach ($package in $wingetPackages) {
+    Write-Output "Installing package: $package"
+    
+    $listApp = winget list --exact --id $package
+    if (![String]::Join("", $listApp).Contains($package)) {
+        Write-host "Installing: " $package
+        $status = Install-WinGetPackage -Id $package
+        if ($status.Status -ne "Ok") {
+            Write-Host "Failed to install package: " $package
+        }
+    }
+    else {
+        Write-host "Skipping: " $package " (already installed)"
+    }
+}
 
 # Refresh PATH
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
