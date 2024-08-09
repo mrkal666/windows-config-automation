@@ -27,7 +27,8 @@ $wingetPackages = @(
     'GitHub.cli',
     'SyncTrayzor.SyncTrayzor',
     'Microsoft.Office',
-    'PuTTY.PuTTY'
+    'PuTTY.PuTTY',
+    'tailscale.tailscale'
 )
 
 $wingetPackagesDevDesktop = @(
@@ -114,7 +115,7 @@ foreach ($package in $wingetPackages) {
 }
 
 if($ComputerType -eq 'dev-desktop' -or $ComputerType -eq 'desktop') {
-    foreach ($wingetPackagesDevDesktop in $wingetPackages) {
+    foreach ($package in $wingetPackagesDevDesktop) {
         Write-Output "Installing package: $package"
         
         $listApp = winget list --exact --id $package
@@ -171,11 +172,32 @@ if($ComputerType -eq "dev-laptop" -or $ComputerType -eq "dev-desktop") {
 Write-Output "Installing Features"
 if($ComputerType -eq "dev-desktop") {
     Write-Output "Installing Hyper-V"
-    Enable-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V-All
+    Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -NoRestart
     Write-Output "Installing HypervisorPlatform"
-    Enable-WindowsOptionalFeature -FeatureName HypervisorPlatform
+    Enable-WindowsOptionalFeature -Online -FeatureName HypervisorPlatform -NoRestart
+}
+
+# Set computer to dark mode
+# New-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name SystemUsesLightTheme -Value 0 -Type Dword -Force; New-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name AppsUseLightTheme -Value 0 -Type Dword -Force
+# Stop-Process -Name "explorer"
+# Start-Process -FilePath "explorer.exe"
+
+# Change theme based on computer type
+if($ComputerType -eq "dev-desktop" -or $ComputerType -eq "desktop") {
+    Write-Output "Changing theme"
+    Start-Process -FilePath "C:\Windows\Resources\Themes\themeB.theme"
+    Start-Sleep 2
+    Stop-Process -Name "systemsettings"
+}
+
+if($ComputerType -eq "dev-laptop" -or $ComputerType -eq "laptop") {
+    Write-Output "Changing theme"
+    Start-Process -FilePath "C:\Windows\Resources\Themes\dark.theme"
+    Start-Sleep 2
+    Stop-Process -Name "systemsettings"
 }
 
 # Reboot the computer
 Write-Output "Rebooting the computer"
 Restart-Computer -Force
+
