@@ -7,7 +7,7 @@ $wingetPackages = @(
     'Git.Git',
     'Microsoft.VisualStudioCode',
     'OpenJS.NodeJS.LTS',
-    'Google.Chrome',
+    'Mozilla.Firefox',
     '7zip.7zip',
     'JanDeDobbeleer.OhMyPosh',
     'Microsoft.PowerToys',
