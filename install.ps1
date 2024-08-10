@@ -44,6 +44,9 @@ if (-not $provider) {
         Find-PackageProvider -Name NuGet -ForceBootstrap -IncludeDependencies
 }
 
+# Update App Installer
+winget install "9nblggh4nns1" -s msstore --force
+
 # Check for winget
 if (-not(Get-Module -ListAvailable -Name Microsoft.Winget.Client)) {
     try {
