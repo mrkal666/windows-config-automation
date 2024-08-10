@@ -36,7 +36,7 @@ $wingetPackagesDevDesktop = @(
     'Microsoft.VisualStudio.2022.Community.Preview'
 )
 
-$dots_repo = "https://github.com/mrkal666/dots.git"
+$dots_repo = "mrkal666/dots"
 
 $provider = Get-PackageProvider NuGet -ErrorAction Ignore
 if (-not $provider) {
@@ -151,7 +151,7 @@ if (Test-Path "$env:USERPROFILE/dots") {
     
 } else {
     Write-Output "User profile/dots directory does not exist"
-    git clone $dots_repo $env:USERPROFILE/dots
+    gh repo clone $dots_repo $env:USERPROFILE/dots
     if(-not(Test-Path $profile -PathType Leaf)) {
         New-Item $profile
     }
