@@ -45,7 +45,7 @@ if (-not $provider) {
 }
 
 # Update App Installer
-winget install "9nblggh4nns1" -s msstore --force
+Add-AppPackage https://aka.ms/getwinget 
 
 # Check for winget
 if (-not(Get-Module -ListAvailable -Name Microsoft.Winget.Client)) {
