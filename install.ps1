@@ -45,7 +45,9 @@ if (-not $provider) {
 }
 
 # Update App Installer
-Add-AppPackage https://aka.ms/getwinget 
+Start-Job -Name WingetInstall -ScriptBlock { Add-AppPackage https://aka.ms/getwinget  }
+Wait-Job -Name WingetInstall
+
 
 # Check for winget
 if (-not(Get-Module -ListAvailable -Name Microsoft.Winget.Client)) {
