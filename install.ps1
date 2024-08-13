@@ -79,7 +79,7 @@ try {
 Write-Output $ComputerType
 
 # We have to execute winget once to accept the EULA
-winget
+winget list
 
 # Install Github CLI
 Write-Output "Installing package: GitHub.cli"
